@@ -3,6 +3,11 @@
 ## Create pricing model
 
 Build the pricing model with Products and Prices. Read the docs to learn more about pricing models.
+First install `pip` and then run the following command:
+
+```python
+pip install wandb
+```
 
 # Build your subscription page
 
