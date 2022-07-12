@@ -1,27 +1,36 @@
-import React, { useState, useEffect } from 'react';
-import './App.css';
+import React, {useState, useEffect} from "react";
+import "./App.css";
 
-const ProductDisplay = () => (
-  <section>
-    <div className="product">
-      <Logo />
-      <div className="description">
-        <h3>Starter plan</h3>
-        <h5>$20.00 / month</h5>
-      </div>
-    </div>
-    <form action="/create-checkout-session" method="POST">
-      {/* Add a hidden field with the lookup_key of your Price */}
-      <input type="hidden" name="lookup_key" value="{{PRICE_LOOKUP_KEY}}" />
-      <button id="checkout-and-portal-button" type="submit">
-        Checkout
-      </button>
-    </form>
-  </section>
-);
-
-const SuccessDisplay = ({ sessionId }) => {
+const ProductDisplay = () => {
   return (
+    <section>
+      {/* [START add-a-pricing-preview-page] */}
+      <div className="product">
+        <Logo />
+        {/* [START create-pricing-model] */}
+        <div className="description">
+          <h3>Starter plan</h3>
+          <h5>$20.00 / month</h5>
+        </div>
+        {/* [END create-pricing-model] */}
+      </div>
+      {/* [START add-a-checkout-button] */}
+      <form action="/create-checkout-session" method="POST">
+        {/* Add a hidden field with the lookup_key of your Price */}
+        <input type="hidden" name="lookup_key" value="{{PRICE_LOOKUP_KEY}}" />
+        <button id="checkout-and-portal-button" type="submit">
+          Checkout
+        </button>
+      </form>
+      {/* [END add-a-checkout-button] */}
+      {/* [END add-a-pricing-preview-page] */}
+    </section>
+  );
+};
+
+const SuccessDisplay = ({sessionId}) => {
+  return (
+    // [START add-a-success-page]
     <section>
       <div className="product Box-root">
         <Logo />
@@ -29,6 +38,7 @@ const SuccessDisplay = ({ sessionId }) => {
           <h3>Subscription to starter plan successful!</h3>
         </div>
       </div>
+      {/* [START redirect-to-the-customer-portal-session] */}
       <form action="/create-portal-session" method="POST">
         <input
           type="hidden"
@@ -36,35 +46,39 @@ const SuccessDisplay = ({ sessionId }) => {
           name="session_id"
           value={sessionId}
         />
+        {/* [START add-a-customer-portal-button] */}
         <button id="checkout-and-portal-button" type="submit">
           Manage your billing information
         </button>
+        {/* [END add-a-customer-portal-button] */}
       </form>
+      {/* [END redirect-to-the-customer-portal-session] */}
     </section>
+    // [END add-a-success-page]
   );
 };
 
-const Message = ({ message }) => (
+const Message = ({message}) => (
   <section>
     <p>{message}</p>
   </section>
 );
 
 export default function App() {
-  let [message, setMessage] = useState('');
+  let [message, setMessage] = useState("");
   let [success, setSuccess] = useState(false);
-  let [sessionId, setSessionId] = useState('');
+  let [sessionId, setSessionId] = useState("");
 
   useEffect(() => {
     // Check to see if this is a redirect back from Checkout
     const query = new URLSearchParams(window.location.search);
 
-    if (query.get('success')) {
+    if (query.get("success")) {
       setSuccess(true);
-      setSessionId(query.get('session_id'));
+      setSessionId(query.get("session_id"));
     }
 
-    if (query.get('canceled')) {
+    if (query.get("canceled")) {
       setSuccess(false);
       setMessage(
         "Order canceled -- continue to shop around and checkout when you're ready."
@@ -72,9 +86,9 @@ export default function App() {
     }
   }, [sessionId]);
 
-  if (!success && message === '') {
+  if (!success && message === "") {
     return <ProductDisplay />;
-  } else if (success && sessionId !== '') {
+  } else if (success && sessionId !== "") {
     return <SuccessDisplay sessionId={sessionId} />;
   } else {
     return <Message message={message} />;
